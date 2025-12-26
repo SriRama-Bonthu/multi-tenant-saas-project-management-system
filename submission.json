@@ -1,0 +1,12 @@
+{
+  "projectName": "Multi-Tenant SaaS Project Management System",
+  "developer": "Bonthu Sri Rama Manikanta Sai",
+  "frontendUrl": "http://localhost:3000",
+  "backendUrl": "http://localhost:5000",
+  "healthCheckEndpoint": "/api/health",
+  "testCredentials": {
+    "tenantSubdomain": "demo",
+    "email": "admin@demo.com",
+    "password": "Demo@123"
+  }
+}
