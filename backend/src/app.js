@@ -4,14 +4,17 @@ const cors = require('cors');
 
 const app = express();
 
+
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://multi-tenant-saas-project-management.vercel.app',
     'https://multi-tenant-saas-project-management-system-m1u9tqbzs.vercel.app'
   ],
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 
 
