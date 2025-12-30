@@ -9,7 +9,7 @@ Each tenant is identified using a **unique subdomain**, and users authenticate u
 The application is fully containerized using **Docker** and is designed following real-world SaaS architecture principles.
 
 ---
-## Project URL(Frontend):http://localhost:3000](https://multi-tenant-saas-project-management-system-m1u9tqbzs.vercel.app/
+## Project URL(Frontend):https://multi-tenant-saas-project-management-system-m1u9tqbzs.vercel.app/
 
 ## 🎯 Key Features
 
