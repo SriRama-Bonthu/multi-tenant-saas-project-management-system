@@ -11,7 +11,6 @@ const userRoutes = require('./routes/user.routes');
 const projectRoutes = require('./routes/project.routes');
 const taskRoutes = require('./routes/task.routes');
 
-const PORT = process.env.PORT || 5000;
 
 /* ---------- HEALTH CHECK ---------- */
 app.get('/api/health', async (req, res) => {
@@ -45,9 +44,12 @@ async function startServer() {
     await runMigrations();
     await runSeeds();
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
   } catch (error) {
     console.error('Startup failed:', error);
     process.exit(1);
