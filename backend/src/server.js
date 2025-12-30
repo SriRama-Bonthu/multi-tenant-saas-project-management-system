@@ -34,6 +34,9 @@ app.use('/api/tenants', tenantUserRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api', taskRoutes);
+app.get('/', (req, res) => {
+  res.send('Multi-tenant SaaS Backend is running 🚀');
+});
 
 /* ---------- START SERVER ---------- */
 async function startServer() {
