@@ -11,7 +11,10 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
+  if (!tenantSubdomain || !email || !password) {
+    setError('All fields are required');
+    return;
+  }
     try {
       const res = await api.post('/auth/login', {
         email,
