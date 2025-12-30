@@ -5,9 +5,13 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: [
+    'http://localhost:3001',
+    'https://multi-tenant-saas-project-managemen.vercel.app'
+  ],
   credentials: true
 }));
+
 
 app.use(express.json());
 const pool = require('./db');
