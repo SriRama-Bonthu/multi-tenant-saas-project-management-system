@@ -8,15 +8,12 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://multi-tenant-saas-project-management-system-m1u9tqbzs.vercel.app'
+    'https://multi-tenant-saas-project-management-system-m1u9tqbzs.vercel.app',
+    'https://multi-tenant-saas-project-management-system.vercel.app'
   ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  credentials: true
 }));
 
-
-app.options('*', cors());
 
 
 
