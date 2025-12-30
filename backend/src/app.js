@@ -8,7 +8,7 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'https://multi-tenant-saas-project-management.vercel.app',
-    'https://multi-tenant-saas-project-management-system-apgmi5wa9.vercel.app'
+    'https://multi-tenant-saas-project-management-system-m1u9tqbzs.vercel.app'
   ],
   credentials: true
 }));
