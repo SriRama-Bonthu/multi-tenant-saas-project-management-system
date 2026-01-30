@@ -14,6 +14,37 @@ Authorization: Bearer <JWT_TOKEN>
 
 ## Authentication APIs
 
+### POST /auth/register-tenant
+**Auth**: Public
+
+**Request Body**
+```json
+{
+  "email": "admin@company.com",
+  "password": "SecurePass@123",
+  "fullName": "Admin Name",
+  "tenantName": "Company Name",
+  "tenantSubdomain": "company"
+}
+```
+
+**Response** (201)
+```json
+{
+  "success": true,
+  "data": {
+    "token": "jwt_token",
+    "user": {
+      "id": "uuid",
+      "email": "admin@company.com",
+      "role": "tenant_admin"
+    }
+  }
+}
+```
+
+---
+
 ### POST /auth/login
 **Auth**: Public
 
@@ -31,7 +62,12 @@ Authorization: Bearer <JWT_TOKEN>
 {
   "success": true,
   "data": {
-    "token": "jwt_token"
+    "token": "jwt_token",
+    "user": {
+      "id": "uuid",
+      "email": "admin@demo.com",
+      "role": "tenant_admin"
+    }
   }
 }
 ```
@@ -52,7 +88,8 @@ Authorization: Bearer <JWT_TOKEN>
     "role": "tenant_admin",
     "tenant": {
       "id": "uuid",
-      "name": "Demo Company"
+      "name": "Demo Company",
+      "subdomain": "demo"
     }
   }
 }
@@ -73,10 +110,10 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## Tenant APIs
+## Tenant Management APIs
 
 ### GET /tenants/:tenantId
-**Auth**: Required
+**Auth**: Required (Tenant Admin)
 
 **Response**
 ```json
@@ -86,7 +123,35 @@ Authorization: Bearer <JWT_TOKEN>
     "id": "uuid",
     "name": "Demo Company",
     "subdomain": "demo",
-    "subscriptionPlan": "pro"
+    "subscriptionPlan": "pro",
+    "isActive": true,
+    "createdAt": "2026-01-30T10:00:00Z"
+  }
+}
+```
+
+---
+
+### PUT /tenants/:tenantId
+**Auth**: Required (Tenant Admin)
+
+**Request Body**
+```json
+{
+  "name": "Updated Company Name",
+  "subscriptionPlan": "enterprise"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "name": "Updated Company Name",
+    "subdomain": "demo",
+    "subscriptionPlan": "enterprise"
   }
 }
 ```
@@ -94,46 +159,71 @@ Authorization: Bearer <JWT_TOKEN>
 ---
 
 ### GET /tenants/:tenantId/users
-**Auth**: Tenant Admin
+**Auth**: Required (Tenant Admin)
+
+**Query Parameters**:
+- `page`: Pagination page (default: 1)
+- `limit`: Results per page (default: 20)
 
 **Response**
 ```json
 {
   "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "email": "user@demo.com",
+      "fullName": "User Name",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2026-01-30T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+## User Management APIs
+
+### POST /tenants/:tenantId/users
+**Auth**: Required (Tenant Admin)
+
+**Request Body**
+```json
+{
+  "email": "newuser@demo.com",
+  "password": "SecurePass@123",
+  "fullName": "New User",
+  "role": "user"
+}
+```
+
+**Response** (201)
+```json
+{
+  "success": true,
   "data": {
-    "users": [
-      {
-        "id": "uuid",
-        "email": "user@demo.com",
-        "role": "user",
-        "isActive": true
-      }
-    ]
+    "id": "uuid",
+    "email": "newuser@demo.com",
+    "fullName": "New User",
+    "role": "user",
+    "isActive": true
   }
 }
 ```
 
 ---
 
-## User APIs
+### GET /tenants/:tenantId/users
+**Auth**: Required (Tenant Admin)
 
-### POST /tenants/:tenantId/users
-**Auth**: Tenant Admin
-
-**Request Body**
-```json
-{
-  "email": "user@demo.com",
-  "password": "User@123",
-  "fullName": "Demo User",
-  "role": "user"
-}
-```
+**Response** (see above - Tenant Users endpoint)
 
 ---
 
 ### PUT /users/:userId
-**Auth**: Tenant Admin
+**Auth**: Required (Tenant Admin or User's own profile)
 
 **Request Body**
 ```json
@@ -143,11 +233,301 @@ Authorization: Bearer <JWT_TOKEN>
 }
 ```
 
+**Response**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "email": "user@demo.com",
+    "fullName": "Updated Name",
+    "role": "user",
+    "isActive": true
+  }
+}
+```
+
 ---
 
 ### DELETE /users/:userId
-**Auth**: Tenant Admin
+**Auth**: Required (Tenant Admin)
 
+**Response**
+```json
+{
+  "success": true,
+  "message": "User deleted successfully"
+}
+```
+
+---
+
+## Project Management APIs
+
+### POST /projects
+**Auth**: Required
+
+**Request Body**
+```json
+{
+  "name": "Website Redesign",
+  "description": "Complete UI overhaul for website",
+  "status": "active"
+}
+```
+
+**Response** (201)
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "name": "Website Redesign",
+    "description": "Complete UI overhaul for website",
+    "status": "active",
+    "createdBy": "uuid",
+    "createdAt": "2026-01-30T10:00:00Z"
+  }
+}
+```
+
+---
+
+### GET /projects
+**Auth**: Required
+
+**Query Parameters**:
+- `status`: Filter by status (active, archived, completed)
+- `page`: Pagination page
+- `limit`: Results per page
+
+**Response**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Website Redesign",
+      "description": "Complete UI overhaul",
+      "status": "active",
+      "createdBy": "uuid",
+      "createdAt": "2026-01-30T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### PUT /projects/:projectId
+**Auth**: Required
+
+**Request Body**
+```json
+{
+  "name": "Updated Project Name",
+  "description": "Updated description",
+  "status": "active"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "name": "Updated Project Name",
+    "description": "Updated description",
+    "status": "active"
+  }
+}
+```
+
+---
+
+### DELETE /projects/:projectId
+**Auth**: Required
+
+**Response**
+```json
+{
+  "success": true,
+  "message": "Project deleted successfully"
+}
+```
+
+---
+
+## Task Management APIs
+
+### POST /projects/:projectId/tasks
+**Auth**: Required
+
+**Request Body**
+```json
+{
+  "title": "Design Homepage",
+  "description": "Create mockups and prototypes",
+  "status": "todo",
+  "assignedTo": "uuid"
+}
+```
+
+**Response** (201)
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "projectId": "uuid",
+    "title": "Design Homepage",
+    "description": "Create mockups and prototypes",
+    "status": "todo",
+    "assignedTo": "uuid",
+    "createdBy": "uuid",
+    "createdAt": "2026-01-30T10:00:00Z"
+  }
+}
+```
+
+---
+
+### GET /projects/:projectId/tasks
+**Auth**: Required
+
+**Query Parameters**:
+- `status`: Filter by status (todo, in_progress, completed)
+- `assignedTo`: Filter by assignee
+- `page`: Pagination page
+- `limit`: Results per page
+
+**Response**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "projectId": "uuid",
+      "title": "Design Homepage",
+      "description": "Create mockups and prototypes",
+      "status": "todo",
+      "assignedTo": "uuid",
+      "createdAt": "2026-01-30T10:00:00Z"
+    }
+  ]
+}
+```
+
+---
+
+### PUT /tasks/:taskId
+**Auth**: Required
+
+**Request Body**
+```json
+{
+  "title": "Updated Title",
+  "description": "Updated description",
+  "assignedTo": "uuid"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "title": "Updated Title",
+    "description": "Updated description",
+    "status": "todo",
+    "assignedTo": "uuid"
+  }
+}
+```
+
+---
+
+### PATCH /tasks/:taskId/status
+**Auth**: Required
+
+**Request Body**
+```json
+{
+  "status": "completed"
+}
+```
+
+**Response**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "title": "Design Homepage",
+    "status": "completed",
+    "updatedAt": "2026-01-30T11:00:00Z"
+  }
+}
+```
+
+---
+
+## Health Check
+
+### GET /health
+**Auth**: Public
+
+**Response**
+```json
+{
+  "status": "ok",
+  "database": "connected",
+  "uptime": 3600
+}
+```
+
+---
+
+## Error Responses
+
+All APIs may return error responses:
+```json
+{
+  "success": false,
+  "error": "Error message describing the issue",
+  "code": "ERROR_CODE"
+}
+```
+
+### HTTP Status Codes
+- **200**: Success
+- **201**: Created
+- **400**: Bad Request (validation error)
+- **401**: Unauthorized (missing/invalid token)
+- **403**: Forbidden (insufficient permissions)
+- **404**: Not Found
+- **500**: Server Error
+
+---
+
+## Best Practices
+
+1. Always include JWT token in Authorization header
+2. Validate input on client side before API calls
+3. Implement proper error handling for failed requests
+4. Use pagination for list endpoints (page, limit parameters)
+5. Store JWT tokens securely (HTTP-only cookies recommended)
+6. Implement token refresh mechanism for long sessions
+7. Log sensitive operations for audit trails
+
+---
+
+**Endpoint Count**: 19 total endpoints  
+**Last Updated**: January 30, 2026
 ---
 
 ## Project APIs
